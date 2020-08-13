@@ -92,6 +92,10 @@ df = df.rename(columns={"hh_gender": "hoh_gender", "hh_head": "respondent_hoh"})
 # Set head of household gender and age where it is given as N/A
 df.loc[(df["hoh_gender"].isnull()) & (df["respondent_hoh"] == "yes"), "hoh_gender"] = df["respondent_gender"]
 
+# Add an adult male count
+df["adult_male_count"] = df["hh_size"]-df["adult_female_count"]-df["boy_6_11_count"]-df["girl_6_11_count"]-df["boy_12_18_count"]-df["girl_12_18_count"]
+df = df.loc[df["adult_male_count"] != -1.0]
+
 # Add an electricity_grid_score column to be 1/0 rather than yes/no
 df.loc[df["electricity_grid"]=="yes", "electricity_grid_score"] = 1
 df.loc[df["electricity_grid"]=="no", "electricity_grid_score"] = 0
@@ -99,6 +103,12 @@ df.loc[df["electricity_grid"]=="no", "electricity_grid_score"] = 0
 # Add a column to denote whether food had been borrowed or limited in the last week
 df["food_borrowed_limited"] = 0
 df.loc[(df["borrowed_food"]>0) | (df["limit_portion_size"]>0) | (df["restrict_consumption"]>0) | (df["reduce_meal_numbers"]>0) | (df["eat_elsewhere"]>0) | (df["women_eat_less"]>0) | (df["men_eat_less"]>0) | (df["nofood_wholeday"]>0), "food_borrowed_limited"] = 1
+
+# Check FCS scores are consistent
+df["FCS"] = df.apply(lambda row: calculate_fcs_score(row["cereals_tubers"], row["pulses_nuts_seeds"], row["vegetables"], row["fruits"], row["dairy"], row["meat_fish"], row["oil_fats"], row["sweets"]), axis=1)
+df["FCS_Category"] = df["FCS"].apply(lambda fcs_score: calculate_fcs_category(fcs_score))
+df.loc[(df["FCS_Category"]=="Acceptable"), "FCS_Category_acceptable"] = 1
+df.loc[(df["FCS_Category"]=="Borderline") | (df["FCS_Category"]=="Poor"), "FCS_Category_acceptable"] = 0
 
 # Convert the FCS score to 0/1 to be used in logistic regression
 df.loc[(df["FCS_Category"]=="Acceptable high") | (df["FCS_Category"]=="Acceptable low"), "FCS_Category_acceptable"] = 1
