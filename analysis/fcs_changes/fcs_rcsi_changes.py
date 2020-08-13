@@ -5,6 +5,8 @@ plt.style.use("acaps")
 
 """
 The logistic regression for the 2018 MSNA found that female headed households were more likely to have unnacceptable FCS scores than male headed households. This was not found in the 2019 MSNA. Therefore this module will look at the changes in the FCS distributions for female and male headed households between 2018 and 2019.
+
+Also looking at the distribution in rCSI (a measurement of food security) for male and female headed households in 2018 (this data is not available for 2019).
 """
 
 """
@@ -33,3 +35,18 @@ for gender in ["male", "female"]:
     plt.xlim([0,120])
     plt.savefig("histogram_fcs_hoh_"+gender+".png")
     plt.close()
+
+"""
+Generate a histogram showing the distribution of rCSI (a measurement of food security/ food coping strategies) for the 2018 data (not available for the 2019 data)
+"""
+# Read in the 2018 data and select only required columns
+df_rcsi = pd.read_csv("../../data/processed/MSNA_Host_2018.csv")
+df_rcsi = df_rcsi[["hoh_gender", "rCSI"]]
+for gender in ["male", "female"]:
+    df_hist = df_rcsi.loc[df["hoh_gender"]==gender]
+    sns.distplot(df_hist[["rCSI"]], hist=True, rug=False, norm_hist=True, kde=False, label=(gender.title()+" headed households"))
+plt.title("Distribution in household rCSI scores in the host community", fontsize=20)
+plt.legend(fontsize=14)
+plt.xlim([0,60])
+plt.savefig("histogram_rcsi.png")
+plt.close()
