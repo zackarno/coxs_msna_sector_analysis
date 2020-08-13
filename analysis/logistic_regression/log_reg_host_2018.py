@@ -18,21 +18,15 @@ Run a logistic regression on the host 2019 MSNA data.
 Read in and process the data
 """
 # Read in the data
-df = pd.read_csv("../../data/processed/MSNA_Host_2019.csv")
+df = pd.read_csv("../../data/processed/MSNA_Host_2018.csv")
 
 # Set the variables
 min_counts = None
-all_vars = {"categorical_vars": ["hoh_gender", "hoh_marital_married"],
-            "continuous_vars": ["hoh_age", "hh_size", "edu_highest_score"]}
-variables = {"hh_coping_mechanism.none": {"categorical_vars": all_vars["categorical_vars"],
-                                          "continuous_vars": all_vars["continuous_vars"]},
-            "feel_unsafe_female_yes_no": {"categorical_vars": all_vars["categorical_vars"],
-                                          "continuous_vars": all_vars["continuous_vars"]},
-            "feel_unsafe_male_yes_no": {"categorical_vars": all_vars["categorical_vars"],
+all_vars = {"categorical_vars": ["hoh_gender"],
+            "continuous_vars": ["hh_size"]}
+variables = {"electricity_grid_score": {"categorical_vars": all_vars["categorical_vars"],
                                         "continuous_vars": all_vars["continuous_vars"]},
-            "enough_water_drinking_cooking_washing": {"categorical_vars": all_vars["categorical_vars"],
-                                                      "continuous_vars": all_vars["continuous_vars"]},
-            "electricity_grid_score": {"categorical_vars": all_vars["categorical_vars"],
+             "food_borrowed_limited": {"categorical_vars": all_vars["categorical_vars"],
                                        "continuous_vars": all_vars["continuous_vars"]},
              "FCS_Category_acceptable": {"categorical_vars": all_vars["categorical_vars"],
                                        "continuous_vars": all_vars["continuous_vars"]},}
@@ -65,7 +59,7 @@ for dependent_variable in variables.keys():
     df_log = df_log.dropna()
 
     # Drop an option from each category in order to avoid singularity
-    drop_firsts = {"hoh_gender": "male", "union_name": "Jalia Palong", "hoh_marital_married": 1}
+    drop_firsts = {"hoh_gender": "male", "union_name": "jalia palong", "hoh_marital_married": 1}
 
     for categorical_var in categorical_vars:
         drop_column = categorical_var+"_"+str(drop_firsts[categorical_var])
