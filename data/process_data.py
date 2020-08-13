@@ -87,7 +87,7 @@ df = df.dropna(how="all")
 df = df.loc[df["survey_consent"]=="yes"]
 
 # Rename columns to be consistent with the 2019 MSNA
-df = df.rename(columns={"hh_gender": "hoh_gender", "hh_head": "respondent_hoh"})
+df = df.rename(columns={"hh_gender": "hoh_gender", "hh_head": "respondent_hoh", "hh_marriage_person": "child_marriage"})
 
 # Set head of household gender and age where it is given as N/A
 df.loc[(df["hoh_gender"].isnull()) & (df["respondent_hoh"] == "yes"), "hoh_gender"] = df["respondent_gender"]
@@ -113,6 +113,14 @@ df.loc[(df["FCS_Category"]=="Borderline") | (df["FCS_Category"]=="Poor"), "FCS_C
 # Convert the FCS score to 0/1 to be used in logistic regression
 df.loc[(df["FCS_Category"]=="Acceptable high") | (df["FCS_Category"]=="Acceptable low"), "FCS_Category_acceptable"] = 1
 df.loc[(df["FCS_Category"]=="Borderline Consumption") | (df["FCS_Category"]=="Poor consumption"), "FCS_Category_acceptable"] = 0
+
+# Convert the PPIx_Category column into a 0/1 score to be used in logistic regression
+df.loc[df["PPIx_Category"]=="Less than 97% chance to be have less than USD3.10/day", "PPIx_Category_acceptable"] = 1
+df.loc[df["PPIx_Category"]=="More than 97% chance to be have less than USD3.10/day", "PPIx_Category_acceptable"] = 0
+
+# Convert the enough_water column into a 0/1 score and rename to be consistent with the 2019 data
+df.loc[df["enough_water"]=="yes", "enough_water_drinking_cooking_washing"] = 1
+df.loc[df["enough_water"]=="no", "enough_water_drinking_cooking_washing"] = 0
 
 # Save the processed data
 df.to_csv("./processed/MSNA_Host_2018.csv", index=False)
