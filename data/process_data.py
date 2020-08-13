@@ -73,6 +73,22 @@ df["FCS_Category"] = df["FCS"].apply(lambda fcs_score: calculate_fcs_category(fc
 df.loc[(df["FCS_Category"]=="Acceptable"), "FCS_Category_acceptable"] = 1
 df.loc[(df["FCS_Category"]=="Borderline") | (df["FCS_Category"]=="Poor"), "FCS_Category_acceptable"] = 0
 
+# Convert the child_marriage column into a 0/1 score
+df.loc[df["child_marriage"]=="yes", "child_marriage_score"] = 1
+df.loc[df["child_marriage"]=="no", "child_marriage_score"] = 0
+
+# Convert the expenditure columns to values to be consistent with the 2018 data
+def quantify_expenditure(amount):
+    if amount == "0_bdt": return 0
+    elif amount == "1_500_bdt": return 250
+    elif amount == "501_1000_bdt": return 750
+    elif amount == "1001_2000_bdt": return 1500
+    elif amount == "2001_5000_bdt": return 3500
+    elif amount == "5001_plus_bdt": return 5500
+column_mapping = {"exp_medical": "spend_medication", "exp_clothing": "spend_clothing", "exp_shelter_materials": "spend_fix_shelter", "exp_education": "spend_education", "exp_debt": "spend_debts", "exp_fuel": "spend_fuel", "exp_hygiene": "spend_hygiene", "exp_hhitems": "spend_hh_items", "exp_comms": "spend_communication", "exp_transport": "spend_transport", "exp_rent": "spend_rent", "exp_food": "spend_food"}
+for categorised_column in column_mapping:
+    df[column_mapping[categorised_column]] = df[categorised_column].apply(lambda amount: quantify_expenditure(amount))
+
 # Save the processed data
 df.to_csv("./processed/MSNA_Host_2019.csv", index=False)
 
@@ -87,7 +103,7 @@ df = df.dropna(how="all")
 df = df.loc[df["survey_consent"]=="yes"]
 
 # Rename columns to be consistent with the 2019 MSNA
-df = df.rename(columns={"hh_gender": "hoh_gender", "hh_head": "respondent_hoh", "hh_marriage_person": "child_marriage"})
+df = df.rename(columns={"hh_gender": "hoh_gender", "hh_head": "respondent_hoh", "hh_marriage_person": "child_marriage", "main_source_food": "food_source", "main_income": "income_source"})
 
 # Set head of household gender and age where it is given as N/A
 df.loc[(df["hoh_gender"].isnull()) & (df["respondent_hoh"] == "yes"), "hoh_gender"] = df["respondent_gender"]
@@ -121,6 +137,22 @@ df.loc[df["PPIx_Category"]=="More than 97% chance to be have less than USD3.10/d
 # Convert the enough_water column into a 0/1 score and rename to be consistent with the 2019 data
 df.loc[df["enough_water"]=="yes", "enough_water_drinking_cooking_washing"] = 1
 df.loc[df["enough_water"]=="no", "enough_water_drinking_cooking_washing"] = 0
+
+# Convert the child_marriage column into a 0/1 score
+df.loc[df["child_marriage"]=="yes", "child_marriage_score"] = 1
+df.loc[df["child_marriage"]=="no", "child_marriage_score"] = 0
+
+# Convert the expenditure columns to categories to be consistent with the 2019 data
+def categorise_expenditure(amount):
+    if amount == 0: return "0_bdt"
+    elif amount <= 500: return "1_500_bdt"
+    elif amount <= 1000: return "501_1000_bdt"
+    elif amount <= 2000: return "1001_2000_bdt"
+    elif amount <= 5000: return "2001_5000_bdt"
+    elif amount > 5000: return "5001_plus_bdt"
+column_mapping = {"exp_medical": "spend_medication", "exp_clothing": "spend_clothing", "exp_shelter_materials": "spend_fix_shelter", "exp_education": "spend_education", "exp_debt": "spend_debts", "exp_fuel": "spend_fuel", "exp_hygiene": "spend_hygiene", "exp_hhitems": "spend_hh_items", "exp_comms": "spend_communication", "exp_transport": "spend_transport", "exp_rent": "spend_rent", "exp_food": "spend_food"}
+for categorised_column in column_mapping:
+    df[categorised_column] = df[column_mapping[categorised_column]].apply(lambda amount: categorise_expenditure(amount))
 
 # Save the processed data
 df.to_csv("./processed/MSNA_Host_2018.csv", index=False)
