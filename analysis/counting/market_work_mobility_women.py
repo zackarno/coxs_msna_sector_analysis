@@ -27,4 +27,24 @@ df_unmarried_market_2019 = df_unmarried_market_2019["unmarried_market_mobility"]
 print(df_unmarried_market_2019.unique())
 print(df_unmarried_market_2019.value_counts(normalize=True).reset_index().sort_values(by="index"))
 
+print("\n")
+
 # Working mobility
+df_work_2018 = df_2018["married_women_work"].dropna()
+print(df_work_2018.unique())
+print(df_work_2018.value_counts(normalize=True).reset_index().sort_values(by="index"))
+print()
+
+df_married_work_2019 = df_2019.loc[df_2019["respondent_gender"]=="male"]
+df_married_work_2019 = df_married_work_2019.loc[df_married_work_2019["married_work_mobility"]!="not_applicable"]
+df_married_work_2019 = df_married_work_2019["married_work_mobility"].dropna()
+print(df_married_work_2019.unique())
+print(df_married_work_2019.value_counts(normalize=True).reset_index().sort_values(by="index"))
+print()
+
+df_unmarried_work_2019 = df_2019.loc[df_2019["respondent_gender"]=="male"]
+df_unmarried_work_2019 = df_unmarried_work_2019.loc[df_unmarried_work_2019["married_work_mobility"]!="not_applicable"]
+df_unmarried_work_2019 = df_unmarried_work_2019["married_work_mobility"].dropna()
+print(df_unmarried_work_2019.unique())
+print(df_unmarried_work_2019.value_counts(normalize=True).reset_index().sort_values(by="index"))
+print()
