@@ -7,6 +7,12 @@ plt.style.use("acaps")
 """
 Run some general counts/ bar charts of different properties against each other. Run counts for the 2018 and 2019 data, and compare. Save the results in a CSV file.
 """
+# Count the number of people in each union in both years
+for year in ["2018", "2019"]:
+    # Read in the data for that year
+    df = pd.read_csv("../../data/processed/MSNA_Host_"+year+".csv")
+    print(df["union_name"].value_counts(normalize=True))
+
 # Define indicators that can be compared between both datasets
 indicators = ["electricity_grid_score", "enough_water_drinking_cooking_washing", "child_marriage_score"]
 
