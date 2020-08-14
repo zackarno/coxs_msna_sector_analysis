@@ -1,6 +1,9 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+import statsmodels.api as sm
+import sys
 plt.style.use("acaps")
 
 """
@@ -11,7 +14,24 @@ df = pd.read_csv("../../data/processed/MSNA_Host_2019.csv")
 df = df[["FCS", "edu_highest_score", "hoh_gender"]]
 df = df.dropna(how="any")
 
-# Plot the data as a scatter plot
+# Run a linear regression using the statsmodels package
+Y = df["FCS"]
+X = df["edu_highest_score"]
+X = sm.add_constant(X)
+model = sm.OLS(Y,X)
+results = model.fit()
+print(results.params)
+print(results.summary())
+
+# Run a linear regression using the sklearn package
+Y = df["FCS"]
+X = df["edu_highest_score"]
+X = sm.add_constant(X)
+reg = LinearRegression().fit(X, Y)
+print(reg.score(X,Y))
+print(reg.coef_)
+
+# Plot the data as a scatter plot and run a linear regression to check the significance of the slope
 fig, ax = plt.subplots(figsize=(15,8))
 sns.scatterplot(data=df, x="edu_highest_score", y="FCS", hue="hoh_gender")
 plt.savefig("./fcs_edu_highest_scatter.png")
