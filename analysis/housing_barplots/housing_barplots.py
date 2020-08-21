@@ -25,10 +25,10 @@ titles = {"house_land_ownership": "Percentage of households who own land and/ or
           "rent_hosted": "Percentage of households who pay rent/ are hosted",
           "hh_agreement": "Percentage of households who hold a written agreement with the landlord"}
 answers = {"house_land_ownership": {"yes_own": "Own land and/ or a house", "no_dont_own": "Don't own land or a house", "co_own": "Co-own land and/ or a house"},
-          "land_house_deed": {"yes": "Hold a ded", "no": "No deed", "decline": "Decline to answer"},
+          "land_house_deed": {"yes": "Hold a deed", "no": "No deed", "decline": "Decline to answer"},
           "rent_hosted": {"caregiver": "Caregiver", "hosted": "Hosted", "pay_rent": "Pay rent"},
           "hh_agreement": {"no": "No written agreement", "yes": "Written agreement", "dntknow_prefer": "Decline to answer"}}
-          
+
 for question in questions:
     df_counts_2018 = df_2018[question].value_counts(normalize=True).reset_index().rename(columns={"index": "answer", question: "percent"})
     df_counts_2018["year"] = "2018"

@@ -33,12 +33,6 @@ df_2018 = df_2018[list(cooking_fuel_list.keys())]
 df_2019 = df_2019[list(cooking_fuel_list.keys())]
 data = {"2018": df_2018, "2019": df_2019}
 
-# Calculate proportions
-df_2018_counts = df_2018.sum().reset_index().rename(columns={"index": "Cooking Fuel", 0: "total"})
-df_2018_counts["percent"] = 100*df_2018_counts["total"]/len(df_2018.dropna(how="all"))
-df_2019_counts = df_2019.sum().reset_index().rename(columns={"index": "Cooking Fuel", 0: "total"})
-df_2019_counts["percent"] = 100*df_2019_counts["total"]/len(df_2019.dropna(how="all"))
-
 # Loop through years and create plots
 titles = {"2018": "Primary cooking fuel used by households in the host community in 2018",
           "2019": "All cooking fuels used by households in the host community in 2019"}
