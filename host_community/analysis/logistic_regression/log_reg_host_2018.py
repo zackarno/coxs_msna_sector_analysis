@@ -11,7 +11,7 @@ import statsmodels.api as sm
 plt.style.use("acaps")
 
 """
-Run a logistic regression on the host 2019 MSNA data.
+Run a logistic regression on the host 2018 MSNA data.
 """
 
 """
@@ -23,26 +23,31 @@ df = pd.read_csv("../../data/processed/MSNA_Host_2018.csv")
 # Set the variables
 min_counts = None
 all_vars = {"categorical_vars": ["hoh_gender"],
-            "continuous_vars": ["hh_size"]}
-variables = {"electricity_grid_score": {"categorical_vars": all_vars["categorical_vars"],
-                                        "continuous_vars": all_vars["continuous_vars"]},
-             "food_borrowed_limited": {"categorical_vars": all_vars["categorical_vars"],
-                                       "continuous_vars": all_vars["continuous_vars"]},
-             "FCS_Category_acceptable": {"categorical_vars": all_vars["categorical_vars"],
-                                       "continuous_vars": all_vars["continuous_vars"]},}
+            "continuous_vars": ["hh_size", "adult_male_count"]}
+variables = ["electricity_grid_score",
+             "food_borrowed_limited",
+             "FCS_Category_acceptable",
+             "PPIx_Category_acceptable",
+             "enough_water_drinking_cooking_washing",
+             "boy_prim_edu_barrier_score",
+             "girl_prim_edu_barrier_score",
+             "boy_second_edu_barrier_score",
+             "girl_second_edu_barrier_score",
+             "house_land_ownership_own",
+             "agri_land_yes"]
 
 """
 Loop through the dependent variables and run a logistic regression for each with different inputs.
 """
-for dependent_variable in variables.keys():
+for dependent_variable in variables:
     df_log = df.copy()
 
     """
     Prepare the data for the model by selecting variables, converting categorical variables using one-hot encoding, dropping nans, and dropping the first column of categorical variables.
     """
     # Set the categorical and continuous variables
-    categorical_vars = variables[dependent_variable]["categorical_vars"]
-    continuous_vars = variables[dependent_variable]["continuous_vars"]
+    categorical_vars = all_vars["categorical_vars"]
+    continuous_vars = all_vars["continuous_vars"]
 
     # Only keep rows with school age children if we are running the "Materiales de estudio" option
     df_log = df_log[[dependent_variable]+categorical_vars+continuous_vars]
@@ -112,3 +117,4 @@ for dependent_variable in variables.keys():
     #df_results.to_csv("results/"+dependent_variable.replace(" ","_")+"results.csv", index=False)
     print(df_results)
     print()
+    #input("Press enter to continue...")

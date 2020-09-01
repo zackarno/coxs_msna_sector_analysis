@@ -24,31 +24,28 @@ df = pd.read_csv("../../data/processed/MSNA_Host_2019.csv")
 min_counts = None
 all_vars = {"categorical_vars": ["hoh_gender", "hoh_marital_married"],
             "continuous_vars": ["hoh_age", "hh_size", "edu_highest_score"]}
-variables = {"hh_coping_mechanism.none": {"categorical_vars": all_vars["categorical_vars"],
-                                          "continuous_vars": all_vars["continuous_vars"]},
-            "feel_unsafe_female_yes_no": {"categorical_vars": all_vars["categorical_vars"],
-                                          "continuous_vars": all_vars["continuous_vars"]},
-            "feel_unsafe_male_yes_no": {"categorical_vars": all_vars["categorical_vars"],
-                                        "continuous_vars": all_vars["continuous_vars"]},
-            "enough_water_drinking_cooking_washing": {"categorical_vars": all_vars["categorical_vars"],
-                                                      "continuous_vars": all_vars["continuous_vars"]},
-            "electricity_grid_score": {"categorical_vars": all_vars["categorical_vars"],
-                                       "continuous_vars": all_vars["continuous_vars"]},
-             "FCS_Category_acceptable": {"categorical_vars": all_vars["categorical_vars"],
-                                       "continuous_vars": all_vars["continuous_vars"]},}
+variables = ["hh_coping_mechanism.none",
+             "feel_unsafe_female_yes_no",
+             "feel_unsafe_male_yes_no",
+             "enough_water_drinking_cooking_washing",
+             "electricity_grid_score",
+             "FCS_Category_acceptable",
+             "education_barrier_economic",
+             "house_land_ownership_own",
+             "agri_land_yes"]
 
 """
 Loop through the dependent variables and run a logistic regression for each with different inputs.
 """
-for dependent_variable in variables.keys():
+for dependent_variable in variables:
     df_log = df.copy()
 
     """
     Prepare the data for the model by selecting variables, converting categorical variables using one-hot encoding, dropping nans, and dropping the first column of categorical variables.
     """
     # Set the categorical and continuous variables
-    categorical_vars = variables[dependent_variable]["categorical_vars"]
-    continuous_vars = variables[dependent_variable]["continuous_vars"]
+    categorical_vars = all_vars["categorical_vars"]
+    continuous_vars = all_vars["continuous_vars"]
 
     # Only keep rows with school age children if we are running the "Materiales de estudio" option
     df_log = df_log[[dependent_variable]+categorical_vars+continuous_vars]
@@ -118,3 +115,4 @@ for dependent_variable in variables.keys():
     #df_results.to_csv("results/"+dependent_variable.replace(" ","_")+"results.csv", index=False)
     print(df_results)
     print()
+    #input("Press enter to continue...")

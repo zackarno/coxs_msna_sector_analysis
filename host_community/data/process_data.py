@@ -89,6 +89,21 @@ column_mapping = {"exp_medical": "spend_medication", "exp_clothing": "spend_clot
 for categorised_column in column_mapping:
     df[column_mapping[categorised_column]] = df[categorised_column].apply(lambda amount: quantify_expenditure(amount))
 
+# Add a house_land_ownership to be comparable to the 2018 data
+df.loc[(df["house"]=="dont_own_house") | (df["land"]=="dont_own_land"), "house_land_ownership"] = "no_dont_own"
+df.loc[(df["house"]=="yes_coown") | (df["land"]=="yes_coown"), "house_land_ownership"] = "co_own"
+df.loc[(df["house"]=="yes_own_house") | (df["land"]=="yes_own_land"), "house_land_ownership"] = "yes_own"
+df.loc[df["house_land_ownership"]=="yes_own", "house_land_ownership_own"] = 1
+df.loc[(df["house_land_ownership"]=="no_dont_own") | (df["house_land_ownership"]=="co_own"), "house_land_ownership_own"] = 0
+
+# Add a barriers to education column to be used in logistic regression
+df.loc[(df["education_barrier.edu_expensive"]==0) | (df["education_barrier.child_income"]==0), "education_barrier_economic"] = 0
+df.loc[(df["education_barrier.edu_expensive"]==1) | (df["education_barrier.child_income"]==1), "education_barrier_economic"] = 1
+
+# Add an agri land score for logistic regression
+df.loc[df["agricultural_land"]=="yes", "agri_land_yes"] = 1
+df.loc[df["agricultural_land"]=="no", "agri_land_yes"] = 0
+
 # Save the processed data
 df.to_csv("./processed/MSNA_Host_2019.csv", index=False)
 
@@ -153,6 +168,24 @@ def categorise_expenditure(amount):
 column_mapping = {"exp_medical": "spend_medication", "exp_clothing": "spend_clothing", "exp_shelter_materials": "spend_fix_shelter", "exp_education": "spend_education", "exp_debt": "spend_debts", "exp_fuel": "spend_fuel", "exp_hygiene": "spend_hygiene", "exp_hhitems": "spend_hh_items", "exp_comms": "spend_communication", "exp_transport": "spend_transport", "exp_rent": "spend_rent", "exp_food": "spend_food"}
 for categorised_column in column_mapping:
     df[categorised_column] = df[column_mapping[categorised_column]].apply(lambda amount: categorise_expenditure(amount))
+
+# Add a score for whether boys/ girls faced barriers going to school, to be used in logistic regression
+df.loc[df["boy_prim_edu_barrier"]=="yes", "boy_prim_edu_barrier_score"] = 1
+df.loc[df["boy_prim_edu_barrier"]=="no", "boy_prim_edu_barrier_score"] = 0
+df.loc[df["girl_prim_edu_barrier"]=="yes", "girl_prim_edu_barrier_score"] = 1
+df.loc[df["girl_prim_edu_barrier"]=="no", "girl_prim_edu_barrier_score"] = 0
+df.loc[df["boy_second_edu_barrier"]=="yes", "boy_second_edu_barrier_score"] = 1
+df.loc[df["boy_second_edu_barrier"]=="no", "boy_second_edu_barrier_score"] = 0
+df.loc[df["girl_second_edu_barrier"]=="yes", "girl_second_edu_barrier_score"] = 1
+df.loc[df["girl_second_edu_barrier"]=="no", "girl_second_edu_barrier_score"] = 0
+
+# Add a house land ownership score for logistic regression
+df.loc[df["house_land_ownership"]=="yes_own", "house_land_ownership_own"] = 1
+df.loc[(df["house_land_ownership"]=="no_dont_own") | (df["house_land_ownership"]=="co_own"), "house_land_ownership_own"] = 0
+
+# Add an agricultural land ownership score for logistic regression
+df.loc[df["hh_agri_land"]=="yes", "agri_land_yes"] = 1
+df.loc[df["hh_agri_land"]=="no", "agri_land_yes"] = 0
 
 # Save the processed data
 df.to_csv("./processed/MSNA_Host_2018.csv", index=False)

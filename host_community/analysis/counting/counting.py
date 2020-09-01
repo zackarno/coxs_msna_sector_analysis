@@ -11,7 +11,6 @@ Run some general counts/ bar charts of different properties against each other. 
 for year in ["2018", "2019"]:
     # Read in the data for that year
     df = pd.read_csv("../../data/processed/MSNA_Host_"+year+".csv")
-    print(df["union_name"].value_counts(normalize=True))
 
 # Define indicators that can be compared between both datasets
 indicators = ["electricity_grid_score", "enough_water_drinking_cooking_washing", "child_marriage_score"]
